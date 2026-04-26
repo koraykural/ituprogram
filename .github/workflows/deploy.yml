@@ -1,0 +1,14 @@
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    uses: koraykural/koraykural-infra/.github/workflows/deploy-backend.yml@main
+    with:
+      subdomain: ituprogram
+      pm2_name: ituprogram
+      build_command: npm run build
+    secrets:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}

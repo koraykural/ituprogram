@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── DersPlan hierarchy ────────────────────────────────────────────────────────
+
+model Faculty {
+  id        Int       @id
+  name      String
+  updatedAt DateTime  @updatedAt
+  programs  Program[]
+}
+
+model PlanType {
+  code      String    @id // e.g. "lisans"
+  name      String
+  updatedAt DateTime  @updatedAt
+  programs  Program[]
+}
+
+model Program {
+  code         String       @id // e.g. "BLGE_LS"
+  name         String
+  updatedAt    DateTime     @updatedAt
+  facultyId    Int
+  faculty      Faculty      @relation(fields: [facultyId], references: [id])
+  planTypeCode String
+  planType     PlanType     @relation(fields: [planTypeCode], references: [code])
+  coursePlans  CoursePlan[]
+}
+
+model CoursePlan {
+  id          Int            @id // from /DersPlanDetay/<id>
+  title       String
+  updatedAt   DateTime       @updatedAt
+  programCode String
+  program     Program        @relation(fields: [programCode], references: [code])
+  semesters   PlanSemester[]
+}
+
+model PlanSemester {
+  id             Int             @id @default(autoincrement())
+  number         Int             // 1–8
+  planId         Int
+  plan           CoursePlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  entries        PlanEntry[]
+  electiveGroups ElectiveGroup[]
+
+  @@unique([planId, number])
+}
+
+// An elective slot in a semester — students pick one course from its entries
+model ElectiveGroup {
+  id         Int          @id @default(autoincrement())
+  semesterId Int
+  semester   PlanSemester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  obsGroupId Int          // grupId from obs.itu.edu.tr
+  name       String       // e.g. "TM Elective I"
+  credit     Float?
+  entries    PlanEntry[]
+}
+
+// A course entry — belongs to either a PlanSemester (compulsory) or an ElectiveGroup (selectable)
+model PlanEntry {
+  id              Int            @id @default(autoincrement())
+  courseCode      String
+  courseTitle     String
+  language        String?
+  credit          Float?
+  ects            Float?
+  updatedAt       DateTime       @updatedAt
+  // Exactly one of these will be set
+  semesterId      Int?
+  semester        PlanSemester?  @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  electiveGroupId Int?
+  electiveGroup   ElectiveGroup? @relation(fields: [electiveGroupId], references: [id], onDelete: Cascade)
+}
+
+// Deduplicated course catalog built from plan entries
+model UniquePlanEntry {
+  courseCode  String  @id
+  courseTitle String
+  language    String?
+  credit      Float?
+  ects        Float?
+}
+
+// ── DersProgram (open sections this semester) ─────────────────────────────────
+
+model Section {
+  crn               String   @id
+  courseCode        String
+  courseName        String
+  teachingMethod    String?
+  instructor        String?
+  buildings         String[]
+  days              String[]
+  times             String[]
+  rooms             String[]
+  capacity          Int      @default(0)
+  enrolled          Int      @default(0)
+  majorRestrictions String[]
+  updatedAt         DateTime @updatedAt
+}
