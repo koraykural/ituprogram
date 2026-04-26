@@ -24,10 +24,16 @@ export default async function SchedulePage({
   if (!plan) notFound();
 
   const courseCodes = [...new Set(selectedCodes)];
-  const sections = await db.section.findMany({
+  const allSections = await db.section.findMany({
     where: courseCodes.length > 0 ? { courseCode: { in: courseCodes } } : undefined,
     orderBy: [{ courseCode: "asc" }, { crn: "asc" }],
   });
+
+  // Filter out sections restricted to other majors
+  const programCode = plan.programCode;
+  const sections = allSections.filter(
+    (s) => s.majorRestrictions.length === 0 || s.majorRestrictions.includes(programCode)
+  );
 
   // Drop CRNs that are no longer in the fetched sections
   const availableCrns = new Set(sections.map((s) => s.crn));

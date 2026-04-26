@@ -364,10 +364,6 @@ export default function ScheduleView({
     return map;
   }, [sections]);
 
-  const selectedCourseCodes = useMemo(
-    () => new Set(sections.filter((s) => selectedCrns.has(s.crn)).map((s) => s.courseCode)).size,
-    [sections, selectedCrns]
-  );
 
   // Compute two separate blocked sets:
   // - alternativeCrns: same course code as a selected section (user already picked one)
