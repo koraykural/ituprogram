@@ -8,6 +8,7 @@ jobs:
     with:
       subdomain: ituprogram
       pm2_name: ituprogram
+      migrate_command: npx prisma migrate deploy
       build_command: npm run build
     secrets:
       VPS_HOST: ${{ secrets.VPS_HOST }}
