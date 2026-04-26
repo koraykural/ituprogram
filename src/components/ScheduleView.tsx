@@ -265,20 +265,20 @@ function SectionRow({
       <td className="px-4 py-2.5 font-mono text-xs text-gray-500 w-24">{section.crn}</td>
       <td className="px-4 py-2.5 font-mono text-xs text-blue-700 w-28">{section.courseCode}</td>
       <td className="px-4 py-2.5 text-sm text-gray-800 max-w-xs truncate">{section.courseName}</td>
-      <td className="px-4 py-2.5 text-sm text-gray-600 hidden md:table-cell">
+      <td className="px-4 py-2.5 text-sm text-gray-600">
         {section.instructor ?? "—"}
       </td>
-      <td className="px-4 py-2.5 text-xs text-gray-500 hidden lg:table-cell">
+      <td className="px-4 py-2.5 text-xs text-gray-500">
         {slots.length === 0 ? "—" : slots.map((s, i) => (
           <div key={i}>{s.day} {s.time}</div>
         ))}
       </td>
-      <td className="px-4 py-2.5 text-xs text-gray-500 hidden lg:table-cell">
+      <td className="px-4 py-2.5 text-xs text-gray-500">
         {uniqueBuildings.length === 0 ? "—" : uniqueBuildings.map((b, i) => (
           <div key={i}>{b}</div>
         ))}
       </td>
-      <td className="px-4 py-2.5 text-xs text-center text-gray-500 hidden sm:table-cell">
+      <td className="px-4 py-2.5 text-xs text-center text-gray-500">
         {section.enrolled}/{section.capacity}
       </td>
     </tr>
@@ -495,17 +495,17 @@ export default function ScheduleView({
             </p>
           ) : (
             <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-[720px]">
                 <thead className="sticky top-0 bg-white z-10">
                   <tr className="text-left text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
                     <th className="px-4 py-2 w-10" />
                     <th className="px-4 py-2 font-medium w-24">CRN</th>
                     <th className="px-4 py-2 font-medium w-28">Code</th>
                     <th className="px-4 py-2 font-medium">Course Name</th>
-                    <th className="px-4 py-2 font-medium hidden md:table-cell">Instructor</th>
-                    <th className="px-4 py-2 font-medium hidden lg:table-cell">Days / Times</th>
-                    <th className="px-4 py-2 font-medium hidden lg:table-cell">Building</th>
-                    <th className="px-4 py-2 font-medium text-center hidden sm:table-cell">Enrolled</th>
+                    <th className="px-4 py-2 font-medium">Instructor</th>
+                    <th className="px-4 py-2 font-medium">Days / Times</th>
+                    <th className="px-4 py-2 font-medium">Building</th>
+                    <th className="px-4 py-2 font-medium text-center">Enrolled</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">

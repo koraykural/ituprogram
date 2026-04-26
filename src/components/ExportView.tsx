@@ -201,7 +201,7 @@ export default function ExportView({ sections, creditMap }: { sections: Section[
             {copied ? "Copied!" : "Copy CRNs"}
           </button>
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
               <th className="px-4 py-2 font-medium">Code</th>
@@ -241,7 +241,7 @@ export default function ExportView({ sections, creditMap }: { sections: Section[
               );
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

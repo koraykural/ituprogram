@@ -158,13 +158,13 @@ function ElectiveGroupSection({
             <td className="px-4 py-2.5 text-gray-700 text-sm">
               {entry.courseTitle}
             </td>
-            <td className="px-4 py-2.5 text-gray-500 text-sm hidden sm:table-cell">
+            <td className="px-4 py-2.5 text-gray-500 text-sm">
               {entry.language ?? "—"}
             </td>
-            <td className="px-4 py-2.5 text-center text-gray-700 text-sm hidden sm:table-cell">
+            <td className="px-4 py-2.5 text-center text-gray-700 text-sm">
               {entry.credit ?? "—"}
             </td>
-            <td className="px-4 py-2.5 text-center text-gray-700 text-sm hidden sm:table-cell">
+            <td className="px-4 py-2.5 text-center text-gray-700 text-sm">
               {entry.ects ?? "—"}
             </td>
           </tr>
@@ -203,7 +203,8 @@ function SemesterCard({
             ` · ${electiveGroups.length} elective group${electiveGroups.length > 1 ? "s" : ""}`}
         </span>
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[520px]">
         <thead>
           <tr className="text-left text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
             <th className="px-4 py-2 w-10">
@@ -217,13 +218,9 @@ function SemesterCard({
             </th>
             <th className="px-4 py-2 font-medium w-28">Code</th>
             <th className="px-4 py-2 font-medium">Title</th>
-            <th className="px-4 py-2 font-medium hidden sm:table-cell">Lang</th>
-            <th className="px-4 py-2 font-medium text-center hidden sm:table-cell">
-              Credits
-            </th>
-            <th className="px-4 py-2 font-medium text-center hidden sm:table-cell">
-              ECTS
-            </th>
+            <th className="px-4 py-2 font-medium">Lang</th>
+            <th className="px-4 py-2 font-medium text-center">Credits</th>
+            <th className="px-4 py-2 font-medium text-center">ECTS</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -248,13 +245,13 @@ function SemesterCard({
               <td className="px-4 py-2.5 text-gray-800 text-sm">
                 {entry.courseTitle}
               </td>
-              <td className="px-4 py-2.5 text-gray-500 text-sm hidden sm:table-cell">
+              <td className="px-4 py-2.5 text-gray-500 text-sm">
                 {entry.language ?? "—"}
               </td>
-              <td className="px-4 py-2.5 text-center text-gray-700 text-sm hidden sm:table-cell">
+              <td className="px-4 py-2.5 text-center text-gray-700 text-sm">
                 {entry.credit ?? "—"}
               </td>
-              <td className="px-4 py-2.5 text-center text-gray-700 text-sm hidden sm:table-cell">
+              <td className="px-4 py-2.5 text-center text-gray-700 text-sm">
                 {entry.ects ?? "—"}
               </td>
             </tr>
@@ -270,6 +267,7 @@ function SemesterCard({
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
@@ -343,17 +341,13 @@ function CustomCourseSelector({
             {loading && shownResults.length === 0 ? (
               <p className="px-4 py-3 text-sm text-gray-400">Searching…</p>
             ) : (
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto"><table className="w-full text-sm min-w-[480px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200 text-left text-xs uppercase tracking-wider text-gray-500">
                     <th className="px-4 py-2 font-medium w-28">Code</th>
                     <th className="px-4 py-2 font-medium">Title</th>
-                    <th className="px-4 py-2 font-medium text-center hidden sm:table-cell">
-                      Credits
-                    </th>
-                    <th className="px-4 py-2 font-medium text-center hidden sm:table-cell">
-                      ECTS
-                    </th>
+                    <th className="px-4 py-2 font-medium text-center">Credits</th>
+                    <th className="px-4 py-2 font-medium text-center">ECTS</th>
                     <th className="px-4 py-2 w-16" />
                   </tr>
                 </thead>
@@ -366,10 +360,10 @@ function CustomCourseSelector({
                       <td className="px-4 py-2.5 text-gray-800 text-sm">
                         {course.courseTitle}
                       </td>
-                      <td className="px-4 py-2.5 text-center text-gray-600 text-sm hidden sm:table-cell">
+                      <td className="px-4 py-2.5 text-center text-gray-600 text-sm">
                         {course.credit ?? "—"}
                       </td>
-                      <td className="px-4 py-2.5 text-center text-gray-600 text-sm hidden sm:table-cell">
+                      <td className="px-4 py-2.5 text-center text-gray-600 text-sm">
                         {course.ects ?? "—"}
                       </td>
                       <td className="px-4 py-2.5 text-right">
@@ -383,7 +377,7 @@ function CustomCourseSelector({
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             )}
           </div>
         )}
@@ -395,7 +389,7 @@ function CustomCourseSelector({
                 Added ({added.length})
               </span>
             </div>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto"><table className="w-full text-sm min-w-[480px]">
               <tbody className="divide-y divide-gray-100">
                 {added.map((course) => (
                   <tr
@@ -418,10 +412,10 @@ function CustomCourseSelector({
                     <td className="px-4 py-2.5 text-gray-800 text-sm">
                       {course.courseTitle}
                     </td>
-                    <td className="px-4 py-2.5 text-center text-gray-600 text-sm hidden sm:table-cell">
+                    <td className="px-4 py-2.5 text-center text-gray-600 text-sm">
                       {course.credit ?? "—"}
                     </td>
-                    <td className="px-4 py-2.5 text-center text-gray-600 text-sm hidden sm:table-cell">
+                    <td className="px-4 py-2.5 text-center text-gray-600 text-sm">
                       {course.ects ?? "—"}
                     </td>
                     <td className="px-4 py-2.5 w-10 text-right">
@@ -439,7 +433,7 @@ function CustomCourseSelector({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
       </div>
