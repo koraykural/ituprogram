@@ -12,11 +12,13 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
+  // Loopback only by default: nginx is the public entry point.
+  const host = process.env.HOST ?? "127.0.0.1";
   createServer((req, res) => {
     const parsedUrl = parse(req.url!, true);
     handle(req, res, parsedUrl);
-  }).listen(port, () => {
-    console.log(`> Ready on http://localhost:${port} (${dev ? "dev" : "prod"})`);
+  }).listen(port, host, () => {
+    console.log(`> Ready on http://${host}:${port} (${dev ? "dev" : "prod"})`);
   });
 
   // Scrape open sections daily at 03:00
