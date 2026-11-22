@@ -1,27 +1,57 @@
 name: Deploy
 
-# These steps used to come from koraykural-infra's deploy-backend.yml. That
-# repo is private now, and a public repo can't call a private repo's workflow.
+# A copy of koraykural-infra's deploy-node-release.yml: a public repo can't
+# call that private repo's workflows. Builds here, uploads the built tree, and
+# deploy-release on the server runs `prisma migrate deploy`, switches, reloads
+# pm2 and checks /healthz, rolling back if it fails. DEPLOY_KEY only runs
+# `deploy-release ituprogram`.
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Same OS as the server, so Prisma's engines match.
+    runs-on: ubuntu-24.04
     steps:
-      - name: Deploy on VPS
-        uses: appleboy/ssh-action@v1
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: deploy
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /var/www/ituprogram.koraykural.com
-            git pull
-            npm ci
-            npx prisma migrate deploy
-            npm run build
-            set -a && [ -f .env ] && source .env && set +a
-            pm2 restart ituprogram --update-env
+          node-version: "24"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Package
+        run: |
+          npm prune --omit=dev
+          tar --exclude=./.git --exclude=./.github --exclude=./.next/cache \
+            -czf "$RUNNER_TEMP/release.tgz" .
+          ls -lh "$RUNNER_TEMP/release.tgz"
+
+      - name: Upload and switch
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "deploy@$VPS_HOST" "deploy $GITHUB_SHA" < "$RUNNER_TEMP/release.tgz"
+
+      - name: Remove key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

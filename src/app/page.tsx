@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
 import PlanSelector from "@/components/PlanSelector";
 
+// Rendered per request: the list comes from the DB, which the scrapers update.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const faculties = await db.faculty.findMany({
     include: {
